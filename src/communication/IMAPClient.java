@@ -2,12 +2,14 @@ package communication;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -77,17 +79,18 @@ public class IMAPClient {
 		    public boolean match(Message message) {
 		    	
 		        try {
-		        	String contentType = message.getContentType();
-		        	
-		        	// Search subject
-		        	if (searchSubject) {
-			        	String subject = message.getSubject();
-			            if (subject != null && subject.contains(text)) {
-			                return true;
-			            }
-		        	}
+		        	Enumeration headers = message.getAllHeaders();
+		        	 
+		            while (headers.hasMoreElements()) {
+		                Header h = (Header) headers.nextElement();
+		                
+		                if (h.getValue().contains(text)) {
+		                	return true;
+		                }
+		            }
 		            
 		        	// Search content
+		            String contentType = message.getContentType();
 		            if ((contentType.contains("TEXT/HTML") || contentType.contains("TEXT/PLAIN"))) {
 		            	if ((message.getContent() + "").contains(text))
 		            		return true;
