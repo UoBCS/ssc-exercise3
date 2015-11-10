@@ -52,6 +52,9 @@ public class IMAPClient {
 		if (!folder.isOpen())
 			folder.open(Folder.READ_WRITE);
 		
+		//Flags allowedFlags = folder.getPermanentFlags();
+		//allowedFlags.contains(arg0)
+		
 		// Fetch messages
 		Message[] messages = folder.getMessages();
 		
