@@ -43,8 +43,8 @@ public class MessagesModel extends Observable {
 		notifyObservers();
 	}
 	
-	public void setFlag(String keyword, String flagName) throws MessagingException {
-		messages = this.client.setFlag(keyword, flagName, messages);
+	public void setFlag(String keyword, String flagName, boolean set) throws MessagingException {
+		messages = this.client.setFlag(keyword, flagName, messages, set);
 		setChanged();
 		notifyObservers();
 	}

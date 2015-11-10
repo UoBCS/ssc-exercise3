@@ -260,9 +260,13 @@ public class EmailClient {
 		JButton addFlagBtn = new JButton("Add");
 		addFlagBtn.setBounds(390, 10, 100, 20);
 		
+		JButton removeFlagBtn = new JButton("Remove");
+		removeFlagBtn.setBounds(510, 10, 100, 20);
+		
 		setFlagsPnl.add(keywordsTxt);
 		setFlagsPnl.add(flagTxt);
 		setFlagsPnl.add(addFlagBtn);
+		setFlagsPnl.add(removeFlagBtn);
 		
 		
 		
@@ -314,10 +318,25 @@ public class EmailClient {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						messagesModel.setFlag(keywordsTxt.getText(), flagTxt.getText());
+						messagesModel.setFlag(keywordsTxt.getText(), flagTxt.getText(), true);
 						MessageBox.show("Flag set successfully", "Success");
 					} catch (MessagingException ex) {
 						MessageBox.show("An internal error has occured when setting the flag.", "Error");
+					}
+				}
+			});
+			
+			// Remove flag button
+			// -----------------
+			removeFlagBtn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						messagesModel.setFlag(keywordsTxt.getText(), flagTxt.getText(), false);
+						MessageBox.show("Flag removed successfully", "Success");
+					} catch (MessagingException e1) {
+						MessageBox.show("An internal error has occured when removing the flag.", "Error");
 					}
 				}
 			});

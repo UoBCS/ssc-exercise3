@@ -99,8 +99,6 @@ public class MessagesView extends JTable implements Observer {
 				from = from.substring(0, from.length() - 2);
 			}
 			
-			System.out.println(model.getFlags(message));
-			
 			// Fill data
 			displayedMessages[index][0] = from;
 			displayedMessages[index][1] = message.getSubject();

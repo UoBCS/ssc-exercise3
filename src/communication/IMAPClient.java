@@ -36,7 +36,7 @@ public class IMAPClient {
 		
 		// Get session and store
 		session = Session.getInstance(props, auth);
-		session.setDebug(true);
+		//session.setDebug(true);
 		store = session.getStore(storeProtocol);
 		store.connect(host, null, null);
 		
@@ -51,9 +51,6 @@ public class IMAPClient {
 		// Open folder is not already
 		if (!folder.isOpen())
 			folder.open(Folder.READ_WRITE);
-		
-		//Flags allowedFlags = folder.getPermanentFlags();
-		//allowedFlags.contains(arg0)
 		
 		// Fetch messages
 		Message[] messages = folder.getMessages();
@@ -135,16 +132,22 @@ public class IMAPClient {
 		return messages;
 	}
 	
-	public Message[] setFlag(String keyword, String flagName, Message[] original) throws MessagingException {
+	public Message[] setFlag(String keyword, String flagName, Message[] original, boolean set) throws MessagingException {
+		
+		Flags flag = new Flags(flagName);
+		
+		// Perform set/remove for all messages
+		if (keyword.equals("*")) {
+			folder.setFlags(original, flag, set);
+		}
 		
 		// Search matching messages (just check body)
 	    Message[] messages = search(keyword, original, false);
 	    
-	    // Set flag
-		Flags flag = new Flags(flagName);
-		folder.setFlags(messages, flag, true);
+	    // Set/Remove flag
+		folder.setFlags(messages, flag, set);
 		
-		return messages;
+		return original;
 		
 	}
 	
@@ -171,17 +174,10 @@ public class IMAPClient {
 			flags.add("Read");
 		}
 		
-		Flags fg = message.getFlags();
-		System.out.println(fg.contains("SPAM"));
-		
 		// User flags
-		if (message.isSet(Flags.Flag.USER)) {
-			System.out.println("yeah");
-			
-			String[] userFlags = message.getFlags().getUserFlags();
-			for (int i = 0; i < userFlags.length; i++) {
-				flags.add(userFlags[i]);
-			}
+		String[] userFlags = message.getFlags().getUserFlags();
+		for (String flag : userFlags) {
+			flags.add(flag);
 		}
 		
 		return Utils.join(", ", flags); //String.join(", ", flags);

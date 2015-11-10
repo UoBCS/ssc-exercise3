@@ -64,9 +64,8 @@ public class SimpleAuthenticator extends Authenticator {
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.weightx = 1.0;
 		JPasswordField password = new JPasswordField("", 20);
+		password.requestFocus();
 		d.add(constrain(password, gb, c));
-		
-		username.requestFocus();
 		
 		// Prompt the login message box
 		while (true) {
