@@ -130,7 +130,7 @@ public class EmailClient {
 		newMessagePnl.setLayout(null);
 		
 		toEmailAddressLbl = new JLabel("To:");
-		toEmailAddressLbl.setBounds(39, 12, 17, 15);
+		toEmailAddressLbl.setBounds(39, 12, 35, 15);
 		newMessagePnl.add(toEmailAddressLbl);
 		
 		toEmailAddressTxt = new JTextField();
@@ -139,7 +139,7 @@ public class EmailClient {
 		toEmailAddressTxt.setColumns(10);
 		
 		subjectLbl = new JLabel("Subject:");
-		subjectLbl.setBounds(39, 64, 46, 15);
+		subjectLbl.setBounds(39, 64, 60, 15);
 		newMessagePnl.add(subjectLbl);
 		
 		subjectTxt = new JTextField();
@@ -148,7 +148,7 @@ public class EmailClient {
 		subjectTxt.setColumns(10);
 		
 		newMessageLbl = new JLabel("Message:");
-		newMessageLbl.setBounds(39, 162, 55, 15);
+		newMessageLbl.setBounds(39, 162, 70, 15);
 		newMessagePnl.add(newMessageLbl);
 		
 		newMessage = new JEditorPane();
@@ -249,11 +249,11 @@ public class EmailClient {
 		setFlagsPnl.setLayout(null);
 		tabbedPane.addTab("Set flags", null, setFlagsPnl, null);
 		
-		JTextField keywordsTxt = new JTextField("lucky winner");
+		final JTextField keywordsTxt = new JTextField("lucky winner");
 		keywordsTxt.setBounds(10, 10, 170, 20);
 		keywordsTxt.setColumns(10);
 		
-		JTextField flagTxt = new JTextField("SPAM");
+		final JTextField flagTxt = new JTextField("SPAM");
 		flagTxt.setBounds(200, 10, 170, 20);
 		flagTxt.setColumns(10);
 		
@@ -271,7 +271,7 @@ public class EmailClient {
 		
 		
 		try {
-			MessagesModel messagesModel = new MessagesModel(imapClient);
+			final MessagesModel messagesModel = new MessagesModel(imapClient);
 			messagesView = new MessagesView(messagesModel, emailContentTxt);
 			emailsPnl.add(new JScrollPane(messagesView), BorderLayout.CENTER);
 			

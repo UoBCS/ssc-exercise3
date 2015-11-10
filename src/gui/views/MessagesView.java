@@ -22,7 +22,7 @@ public class MessagesView extends JTable implements Observer {
 
 	MessagesModel model;
 	
-	public MessagesView(MessagesModel model, JEditorPane content) {
+	public MessagesView(final MessagesModel model, final JEditorPane content) {
 		super();
         this.model = model;
         

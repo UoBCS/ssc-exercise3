@@ -17,6 +17,8 @@ import javax.mail.UIDFolder.FetchProfileItem;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
+import utils.Utils;
+
 import com.sun.mail.imap.IMAPFolder;
 
 public class IMAPClient {
@@ -68,7 +70,7 @@ public class IMAPClient {
 		return search(text, original, true);
 	}
 	
-	public Message[] search(String text, Message[] original, boolean searchSubject) throws MessagingException {
+	public Message[] search(final String text, Message[] original, final boolean searchSubject) throws MessagingException {
 		
 		// Create search criteria
 		SearchTerm term = new SearchTerm() {
@@ -179,6 +181,6 @@ public class IMAPClient {
 			}
 		}
 		
-		return String.join(", ", flags);
+		return Utils.join(", ", flags); //String.join(", ", flags);
 	}
 }
