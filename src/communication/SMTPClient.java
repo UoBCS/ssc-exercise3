@@ -19,12 +19,23 @@ import javax.mail.internet.MimeMultipart;
 
 import exceptions.ClientException;
 
+/**
+ * SMTPClient
+ * Defines the actions to send a message
+ */
 public class SMTPClient {
 	
 	private Session session;
 	private String transportProtocol;
 	private SimpleAuthenticator auth;
 	
+	/**
+	 * Creates a new SMTP client
+	 * 
+	 * @param transportProtocol The protocol used for transporting
+	 * @param host The SMTP host
+	 * @param auth The authenticator
+	 */
 	public SMTPClient(String transportProtocol, String host, SimpleAuthenticator auth) {
 		
 		// Set properties
@@ -40,10 +51,26 @@ public class SMTPClient {
 		
 	}
 	
+	/**
+	 * Sends a message
+	 * 
+	 * @param to The receiver
+	 * @param cc The carbon copy
+	 * @param filenames The filenames attached
+	 * @param subject The subject
+	 * @param body The body text message
+	 * @throws MessagingException
+	 * @throws ClientException
+	 */
 	public void sendMessage(String to, String cc, ArrayList<String> filenames, String subject, String body) throws MessagingException, ClientException {
+		
+		// Sanity checks
 		if (to.isEmpty()) {
 			throw new ClientException("The receiver field cannot be empty");
 		}
+		
+		// Message construction
+		// --------------------
 		
 		Message message = new MimeMessage(session);
 		
@@ -53,6 +80,7 @@ public class SMTPClient {
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
 		message.setSubject(subject);
 		
+		// Create a multipart message
 		Multipart multipart = new MimeMultipart();
 		
 		// Text message
@@ -60,7 +88,7 @@ public class SMTPClient {
 		messageBodyPart.setText(body);
 		multipart.addBodyPart(messageBodyPart);
 		
-		// Attach files
+		// Attach files (if any)
 		for (String filename : filenames) {
 			messageBodyPart = new MimeBodyPart();
 			DataSource source = new FileDataSource(filename);
@@ -72,11 +100,12 @@ public class SMTPClient {
 		message.setContent(multipart);
 		message.saveChanges();
 		
-		// Send message
+		// Send message and close transport session
 		Transport tr = session.getTransport(transportProtocol);	
 		tr.connect(auth.getUsername(), auth.getPassword());
 		tr.sendMessage(message, message.getAllRecipients());
 		tr.close();
+		
 	}
 	
 }

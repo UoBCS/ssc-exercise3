@@ -21,12 +21,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * SimpleAuthenticator
+ * A simple GUI authenticator built on top of
+ * the Authenticator class
+ */
 public class SimpleAuthenticator extends Authenticator {
 
 	private Frame frame;
 	private String username;
 	private String password;
 
+	/**
+	 * Creates a new SimpleAuthenticator object
+	 * @param f Parent frame
+	 */
 	public SimpleAuthenticator(Frame f) {
 		this.frame = f;
 	}
@@ -68,21 +77,28 @@ public class SimpleAuthenticator extends Authenticator {
 		d.add(constrain(password, gb, c));
 		
 		// Prompt the login message box
+		// ----------------------------
+		
 		while (true) {
 			int result = JOptionPane.showConfirmDialog(frame, d, "Login",
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
+			// If user clicked 'OK' then...
 			if (result == JOptionPane.OK_OPTION) {
+				
+				// Store username and password
 				this.username = username.getText();
 				this.password = password.getText();
 				
 				// Test the connection
 				try {
 					testConnection(this.username, this.password);
-					break;
-				} catch (AuthenticationFailedException e) {
+					break; // Exit the loop
+				}
+				catch (AuthenticationFailedException e) {
 					MessageBox.show("Authentication failure. Check your email or/and password.", "Error");
-				} catch (MessagingException e) {
+				}
+				catch (MessagingException e) {
 					MessageBox.show("Communication error.", "Error");
 				}
 			}
@@ -93,6 +109,13 @@ public class SimpleAuthenticator extends Authenticator {
 		return new PasswordAuthentication(this.username, this.password);
 	}
 
+	/**
+	 * Test a connection
+	 * @param username The username
+	 * @param password The password
+	 * @throws MessagingException
+	 * @throws AuthenticationFailedException
+	 */
 	private void testConnection(String username, String password) throws MessagingException, AuthenticationFailedException {
 		int port = 587;
 		String host = "smtp.gmail.com";
@@ -107,15 +130,30 @@ public class SimpleAuthenticator extends Authenticator {
 	    transport.close();
 	}
 	
+	/**
+	 * Utility method to constrain a component
+	 * @param cmp The component
+	 * @param gb The layout
+	 * @param c The constraints
+	 * @return The constrained component
+	 */
 	private Component constrain(Component cmp, GridBagLayout gb, GridBagConstraints c) {
 		gb.setConstraints(cmp, c);
 		return (cmp);
 	}
 	
+	/**
+	 * Returns the username
+	 * @return
+	 */
 	public String getUsername() {
 		return username;
 	}
 	
+	/**
+	 * Returns the password
+	 * @return
+	 */
 	public String getPassword() {
 		return password;
 	}

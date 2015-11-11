@@ -18,13 +18,25 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * MessagesView
+ * Defines a messages view which observes a MessagesModel object
+ */
 public class MessagesView extends JTable implements Observer {
 
 	MessagesModel model;
 	
+	/**
+	 * Creates a new MessagesView object
+	 * @param model The model to observe
+	 * @param content The content to edit
+	 */
 	public MessagesView(final MessagesModel model, final JEditorPane content) {
 		super();
         this.model = model;
+        
+        // Build table
+        // -----------
         
 		try {
 			Object[][] displayedMsgs = displayMessages(model.getMessages());
@@ -33,30 +45,38 @@ public class MessagesView extends JTable implements Observer {
 			
 			setModel(dtm);
 		} catch (MessagingException ex) {
-			ex.printStackTrace();
+			MessageBox.show("Could not build table.", "Error");
 		}
+		
+		// Select row event
+		// ----------------
 		
 		getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				
+				// Get selected row
 				int index = getSelectedRow();
 				if (index == -1)
 					return;
-					
+				
 				Message message = model.getMessage(index);
 				
-				// Display content
+				// Display message content
 				try {
 					String contentType = message.getContentType();
 					
+					// Plain HTML or simple text
 					if (contentType.contains("TEXT/HTML") || contentType.contains("TEXT/PLAIN")) {
 						content.setText(message.getContent() + "");
 					}
+					// Multipart message
 					else {
 						Multipart multipart = (Multipart) message.getContent();
 						boolean foundText = false;
 						
+						// Extract only text
 						for (int i = 0; i < multipart.getCount() && !foundText; i++) {
 							BodyPart bodyPart = multipart.getBodyPart(i);
 							String bodyPartContentType = bodyPart.getContentType();
@@ -67,6 +87,7 @@ public class MessagesView extends JTable implements Observer {
 							}
 						}
 						
+						// If no text was found then we cannot display the content
 						if (!foundText) {
 							content.setText("Cannot display content. There is no text part in the message.");
 						}
@@ -81,6 +102,12 @@ public class MessagesView extends JTable implements Observer {
 		});
 	}
 	
+	/**
+	 * Displays a message list into a table
+	 * @param messages The message array
+	 * @return A matrix that defines the table
+	 * @throws MessagingException
+	 */
 	private Object[][] displayMessages(Message[] messages) throws MessagingException {
 		int max = messages.length, index = 0;
 		Object[][] displayedMessages = new Object[max][3];

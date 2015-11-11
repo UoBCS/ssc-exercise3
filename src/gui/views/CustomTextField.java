@@ -7,19 +7,18 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+/**
+ * CustomTextField
+ * Utility class for text fields with placeholders
+ * REFRENCE: https://lazicbrano.wordpress.com/2013/08/01/jtextfield-placeholder/
+ */
 public class CustomTextField extends JTextField {
 
 	private Font originalFont;
 	private Color originalForeground;
-	/**
-	 * Grey by default*
-	 */
 	private Color placeholderForeground = new Color(160, 160, 160);
 	private boolean textWrittenIn;
-
-	/**
-	 * You can insert all constructors. I inserted only this one.*
-	 */
+	
 	public CustomTextField(int columns) {
 		super(columns);
 	}
@@ -87,7 +86,6 @@ public class CustomTextField extends JTextField {
 					setForeground(originalForeground);
 					setTextWrittenIn(true);
 				}
-
 			}
 		});
 
@@ -106,7 +104,6 @@ public class CustomTextField extends JTextField {
 					customizeText(text);
 				}
 			}
-
 		});
 
 	}
@@ -117,5 +114,4 @@ public class CustomTextField extends JTextField {
 		setForeground(getPlaceholderForeground());
 		setTextWrittenIn(false);
 	}
-
 }

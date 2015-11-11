@@ -10,6 +10,8 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,12 +101,26 @@ public class EmailClient {
 	private void initialize() {
 		
 		// Create main frame
+		// -----------------
 		frmEmailClient = new JFrame();
 		frmEmailClient.setTitle("Email client");
 		frmEmailClient.setBounds(100, 100, 875, 540);
+		frmEmailClient.addWindowListener(new WindowAdapter() {
+	        public void windowClosing(WindowEvent e) {
+	        	// Clean up operations (clients are already created)
+	        	try {
+					imapClient.close();
+				} catch (MessagingException ex) {
+					// Fail silently (at least in the GUI)
+					System.out.println("Error closing IMAP client: " + ex.getMessage());
+				}
+	        }
+
+	    });
 		frmEmailClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// Authenticate and create client
+		// Authenticate and create clients
+		// -------------------------------
 		try {
 			SimpleAuthenticator auth = new SimpleAuthenticator(frmEmailClient);
 			
@@ -112,9 +128,11 @@ public class EmailClient {
 			imapClient = new IMAPClient("imaps", "imap.googlemail.com", auth);
 		}
 		catch (AuthenticationFailedException e) {
+			MessageBox.show("Could not log you in.", "Warning");
 			System.exit(1);
 		}
 		catch (MessagingException e) {
+			MessageBox.show("An internal error has occured.", "Error");
 			System.exit(1);
 		}
 		
@@ -160,6 +178,8 @@ public class EmailClient {
 		fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(true);
 		
+		// Send message button
+		// -------------------
 		sendMessageBtn = new JButton("Send");
 		sendMessageBtn.addActionListener(new ActionListener() {
 			
@@ -179,7 +199,7 @@ public class EmailClient {
 					MessageBox.show(ex.getMessage(), "Error");
 				}
 				catch (MessagingException ex) {
-					MessageBox.show("An internal error has occured in sending your message.", "Error");
+					MessageBox.show("An internal error has occured whilst sending your message.", "Error");
 				}
 			}
 		});
@@ -271,7 +291,7 @@ public class EmailClient {
 					try {
 						messagesModel.reset();
 					} catch (MessagingException e1) {
-						MessageBox.show("An internal error has occured when refreshing the emails.", "Error");
+						MessageBox.show("An internal error has occured whilst refreshing the emails.", "Error");
 					}
 				}
 			});
@@ -285,7 +305,7 @@ public class EmailClient {
 					try {
 						messagesModel.search(searchTxt.getText());
 					} catch (MessagingException ex) {
-						MessageBox.show("An internal error has occured when refreshing the emails.", "Error");
+						MessageBox.show("An internal error has occured whilst refreshing the emails.", "Error");
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -299,10 +319,18 @@ public class EmailClient {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						messagesModel.setFlag(keywordsTxt.getText(), flagTxt.getText(), true);
+						String keywords = keywordsTxt.getText();
+						String flag = flagTxt.getText();
+						
+						if (keywords.isEmpty() || flag.isEmpty()) {
+							MessageBox.show("Please supply a value", "Warning");
+							return;
+						}
+						
+						messagesModel.setFlag(keywords, flag, true);
 						MessageBox.show("Flag set successfully", "Success");
 					} catch (MessagingException ex) {
-						MessageBox.show("An internal error has occured when setting the flag.", "Error");
+						MessageBox.show("An internal error has occured whilst setting the flag.", "Error");
 					}
 				}
 			});
@@ -314,10 +342,18 @@ public class EmailClient {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						messagesModel.setFlag(keywordsTxt.getText(), flagTxt.getText(), false);
+						String keywords = keywordsTxt.getText();
+						String flag = flagTxt.getText();
+						
+						if (keywords.isEmpty() || flag.isEmpty()) {
+							MessageBox.show("Please supply a value", "Warning");
+							return;
+						}
+						
+						messagesModel.setFlag(keywords, flag, false);
 						MessageBox.show("Flag removed successfully", "Success");
 					} catch (MessagingException e1) {
-						MessageBox.show("An internal error has occured when removing the flag.", "Error");
+						MessageBox.show("An internal error has occured whilst removing the flag.", "Error");
 					}
 				}
 			});
