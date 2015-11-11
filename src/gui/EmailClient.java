@@ -2,10 +2,12 @@ package gui;
 
 import exceptions.ClientException;
 import gui.models.MessagesModel;
+import gui.views.CustomTextField;
 import gui.views.MessagesView;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -213,9 +215,8 @@ public class EmailClient {
 		// === DISPLAY EMAILS TAB ===
 		// ==========================
 		
-		visualiseEmailPnl = new JPanel();
+		visualiseEmailPnl = new JPanel(new BorderLayout(0, 10));
 		tabbedPane.addTab("Inbox", null, visualiseEmailPnl, null);
-		visualiseEmailPnl.setLayout(new BorderLayout(0, 0));
 		
 		emailsPnl = new JPanel();
 		visualiseEmailPnl.add(emailsPnl, BorderLayout.WEST);
@@ -241,38 +242,18 @@ public class EmailClient {
 		searchPnl.add(searchBtn, BorderLayout.EAST);
 		searchPnl.add(refreshBtn, BorderLayout.WEST);
 		
-		// ======================
-		// === SET FLAGS TAB ====
-		// ======================
-		
-		setFlagsPnl = new JPanel(new BorderLayout());
-		setFlagsPnl.setLayout(null);
-		tabbedPane.addTab("Set flags", null, setFlagsPnl, null);
-		
-		final JTextField keywordsTxt = new JTextField("lucky winner");
-		keywordsTxt.setBounds(10, 10, 170, 20);
-		keywordsTxt.setColumns(10);
-		
-		final JTextField flagTxt = new JTextField("SPAM");
-		flagTxt.setBounds(200, 10, 170, 20);
-		flagTxt.setColumns(10);
-		
+		setFlagsPnl = new JPanel(new GridLayout(1, 4));
+		final CustomTextField keywordsTxt = new CustomTextField("Enter keywords or *");
+		final CustomTextField flagTxt = new CustomTextField("Enter flag");
 		JButton addFlagBtn = new JButton("Add");
-		addFlagBtn.setBounds(390, 10, 100, 20);
-		
 		JButton removeFlagBtn = new JButton("Remove");
-		removeFlagBtn.setBounds(510, 10, 100, 20);
 		
 		setFlagsPnl.add(keywordsTxt);
 		setFlagsPnl.add(flagTxt);
 		setFlagsPnl.add(addFlagBtn);
 		setFlagsPnl.add(removeFlagBtn);
 		
-		
-		
-		
-		
-		
+		visualiseEmailPnl.add(setFlagsPnl, BorderLayout.NORTH);
 		
 		try {
 			final MessagesModel messagesModel = new MessagesModel(imapClient);
