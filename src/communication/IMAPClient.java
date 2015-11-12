@@ -98,8 +98,7 @@ public class IMAPClient {
 
 							// Get body and content type
 							BodyPart bodyPart = multipart.getBodyPart(i);
-							String bodyPartContentType = bodyPart
-									.getContentType();
+							String bodyPartContentType = bodyPart.getContentType();
 
 							// Check if the part contains the specified text
 							if ((bodyPartContentType.contains("TEXT/HTML")
@@ -109,9 +108,11 @@ public class IMAPClient {
 							}
 						}
 					}
-				} catch (MessagingException ex) {
+				}
+				catch (MessagingException ex) {
 					ex.printStackTrace();
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					ex.printStackTrace();
 				}
 
@@ -218,7 +219,7 @@ public class IMAPClient {
 
 		// Search matching messages (just check body)
 		Message[] messages = multipleKeywordSearch(keywordsArr, original, false);
-
+		
 		// Set/Remove flag
 		folder.setFlags(messages, flag, set);
 

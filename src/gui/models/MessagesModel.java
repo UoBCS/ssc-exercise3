@@ -73,11 +73,20 @@ public class MessagesModel extends Observable {
 	
 	/**
 	 * Refreshes the email list
+	 * @param  
 	 * 
 	 * @throws MessagingException
 	 */
 	public void reset() throws MessagingException {
 		messages = this.client.getMessages("inbox");
+		setChanged();
+		notifyObservers();
+	}
+	
+	/**
+	 * Simply notifies views
+	 */
+	public void notifyViews() {
 		setChanged();
 		notifyObservers();
 	}

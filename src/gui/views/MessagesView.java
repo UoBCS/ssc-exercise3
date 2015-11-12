@@ -24,7 +24,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MessagesView extends JTable implements Observer {
 
-	MessagesModel model;
+	private MessagesModel model;
+	private int currentRow;
+	private ListSelectionListener listSelectionListener;
 	
 	/**
 	 * Creates a new MessagesView object
@@ -44,17 +46,22 @@ public class MessagesView extends JTable implements Observer {
 			DefaultTableModel dtm = new DefaultTableModel(displayedMsgs, columnNames);
 			
 			setModel(dtm);
-		} catch (MessagingException ex) {
+		}
+		catch (MessagingException ex) {
 			MessageBox.show("Could not build table.", "Error");
 		}
 		
 		// Select row event
 		// ----------------
-		
-		getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		listSelectionListener = new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				
+				// Avoid triggering the event twice
+				if (getSelectionModel().getValueIsAdjusting()) {
+					return;
+				}
 				
 				// Get selected row
 				int index = getSelectedRow();
@@ -93,13 +100,20 @@ public class MessagesView extends JTable implements Observer {
 						}
 					}
 					
-				} catch (MessagingException ex) {
+					currentRow = index;
+					model.notifyViews();
+				}
+				catch (MessagingException ex) {
 					MessageBox.show("Error in displaying the message.", "Error");
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					MessageBox.show("Error in getting the content of the message.", "Error");
 				}
+				
 			}
-		});
+		};
+		
+		getSelectionModel().addListSelectionListener(listSelectionListener);
 	}
 	
 	/**
@@ -149,10 +163,16 @@ public class MessagesView extends JTable implements Observer {
 			Object[][] displayedMsgs = displayMessages(model.getMessages());
 			String[] columnNames = new String[] { "From", "Subject", "Status" };
 			DefaultTableModel dtm = new DefaultTableModel(displayedMsgs, columnNames);
-			
 			setModel(dtm);
 			
-		} catch (MessagingException ex) {
+			// Keep selection
+			getSelectionModel().removeListSelectionListener(listSelectionListener);
+			if (currentRow < getRowCount())
+				setRowSelectionInterval(currentRow, currentRow);
+			getSelectionModel().addListSelectionListener(listSelectionListener);
+			
+		}
+		catch (MessagingException ex) {
 			MessageBox.show("Error in updating the email table.", "Error");
 		}
 	}
